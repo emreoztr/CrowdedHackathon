@@ -13,7 +13,6 @@ import android.widget.Button;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,11 +22,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.HashMap;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap _map;
     private LatLng _userPos = null;
     private FusedLocationProviderClient _user;
+    private HashMap<String, LatLng> _markers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +40,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //Gets locationservice for user
+        //Gets location service for user
         _user = LocationServices.getFusedLocationProviderClient(this);
 
-        giveFeaturetoButtons();
+        _markers = new HashMap<>();
+
+        giveFeatureToButtons();
         //if user already gave location permission
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -52,15 +56,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 11);
         }
 
+
     }
 
     //adds button features
-    private void giveFeaturetoButtons(){
+    private void giveFeatureToButtons(){
         Button getLoc = findViewById(R.id.get_location);
         getLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(_userPos != null) {
+                    //clears map form markers
+                    _map.clear();
+                    _markers.clear();
+                    _markers.put("user", _userPos);
+
                     //puts marker to current location
                     _map.addMarker(new MarkerOptions().position(_userPos).title("Your Location"));
                     goLocation(_userPos);
@@ -77,6 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -89,17 +100,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         _map = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        /*LatLng sydney = new LatLng(-34, 151);
-        _map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));*/
-
-        //_map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mapOnClickBehaviour();
     }
 
+    private void mapOnClickBehaviour(){
+        _map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                if(_markers.size() >= 2){
+                    _map.clear();
+                    _markers.clear();
+                }
+                _markers.put("loc" + _markers.size(), point);
+                _map.addMarker(new MarkerOptions().position(point).title("User Marker"));
+            }
+        });
+    }
+
+    //zooms camera to location
     private void goLocation(LatLng loc){
-        if(loc != null)
+        if(loc != null){
             _map.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 10));
+        }
     }
 
     private void getCurrentLocation() {
@@ -113,6 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSuccess(Location location) {
                 if(location != null){
                     _userPos = new LatLng(location.getLatitude(), location.getLongitude());
+
                 }
             }
         });
