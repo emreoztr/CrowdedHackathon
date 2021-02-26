@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Crowded Hackathon</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="heatmap_button">Create Heat Map</string>
+    <string name="getloc_button">Get Location</string>
+</resources>
