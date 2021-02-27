@@ -83,7 +83,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         addHMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(_markers.size() == 2){
+                    try {
+                        new HeatMapCalc(_map, _markers, 150, 30);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }
