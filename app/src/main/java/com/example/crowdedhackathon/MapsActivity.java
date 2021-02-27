@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -29,7 +30,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap _map;
     private LatLng _userPos = null;
     private FusedLocationProviderClient _user;
-    private HashMap<String, LatLng> _markers;
+    private ArrayList<LatLng> _markers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Gets location service for user
         _user = LocationServices.getFusedLocationProviderClient(this);
 
-        _markers = new HashMap<>();
+        _markers = new ArrayList<>();
 
         giveFeatureToButtons();
         //if user already gave location permission
@@ -69,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //clears map form markers
                     _map.clear();
                     _markers.clear();
-                    _markers.put("user", _userPos);
+                    _markers.add(_userPos);
 
                     //puts marker to current location
                     _map.addMarker(new MarkerOptions().position(_userPos).title("Your Location"));
@@ -111,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     _map.clear();
                     _markers.clear();
                 }
-                _markers.put("loc" + _markers.size(), point);
+                _markers.add(point);
                 _map.addMarker(new MarkerOptions().position(point).title("User Marker"));
             }
         });
