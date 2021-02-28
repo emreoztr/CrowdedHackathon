@@ -31,17 +31,25 @@ public abstract class ScrapJSON extends AsyncTask<ArrayList<String>, Void, HashS
                 JSONObject jsonObj = URLtoString(urls[0].get(j));
                 //gets results array from json of google places api
                 if(!jsonObj.getString("status").equals("INVALID_REQUEST")) {
-
+                    int page_num = 0;
 
                     JSONArray jsonArr = jsonObj.getJSONArray("results");
-
-                    for (int i = 1; i < jsonArr.length(); ++i) {
-                        JSONObject place = jsonArr.getJSONObject(i);
-                        JSONObject geo = place.getJSONObject("geometry");
-                        JSONObject pos = geo.getJSONObject("location");
-                        posList.add(new WeightedLatLng(new LatLng(pos.getDouble("lat"), pos.getDouble("lng")), 3.0));
-
-                    }
+                    do{
+                        if(page_num != 0){
+                            StringBuilder nextUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+                            nextUrl.append("pagetoken=").append(jsonObj.getString("next_page_token")).append("&");
+                            nextUrl.append("key=").append(App.getContext().getResources().getString(R.string.google_maps_key));
+                            jsonObj = URLtoString(nextUrl.toString());
+                            jsonArr = jsonObj.getJSONArray("results");
+                        }
+                        for (int i = 0; i < jsonArr.length(); ++i) {
+                            JSONObject place = jsonArr.getJSONObject(i);
+                            JSONObject geo = place.getJSONObject("geometry");
+                            JSONObject pos = geo.getJSONObject("location");
+                            posList.add(new WeightedLatLng(new LatLng(pos.getDouble("lat"), pos.getDouble("lng")), 3.0));
+                        }
+                        page_num++;
+                    }while(jsonObj.has("next_page_token"));
                 }
             }
             return posList;
