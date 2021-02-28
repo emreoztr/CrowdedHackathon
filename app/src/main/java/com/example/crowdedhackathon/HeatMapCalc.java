@@ -69,8 +69,8 @@ public class HeatMapCalc{
         ScrapJSON background = new ScrapJSON() {
             @Override
             public void onResponseReceived(Object result) {
-                if(result instanceof HashSet){
-                    HeatmapTileProvider provide = new HeatmapTileProvider.Builder().weightedData((HashSet)result).build();
+                if(result instanceof ArrayList){
+                    HeatmapTileProvider provide = new HeatmapTileProvider.Builder().weightedData((ArrayList)result).build();
                     TileOverlay overlay = map.addTileOverlay(new TileOverlayOptions().tileProvider(provide));
                 }
             }
