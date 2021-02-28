@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Crowded Hackathon</string>
     <string name="title_activity_maps">Map</string>
-    <string name="heatmap_button">Create Heat Map</string>
+    <string name="more_button">More Populated</string>
+    <string name="less_button">Less Populated</string>
     <string name="getloc_button">Get Location</string>
     <string name="API_KEY">AIzaSyCLs59DP3qU_adkZhBlM5AXoAWj8pQUSAc</string>
 </resources>
