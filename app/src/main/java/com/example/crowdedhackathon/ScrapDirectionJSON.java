@@ -58,7 +58,7 @@ public abstract class ScrapDirectionJSON extends AsyncTask<String, Void, ArrayLi
 
 
     private JSONObject URLtoString(String url) throws IOException, JSONException {
-        //building connection with url
+        //building connection with urls
         URL placesURL = new URL(url);
         StringBuilder sBuilder = new StringBuilder();
         HttpURLConnection con = (HttpURLConnection) placesURL.openConnection();
